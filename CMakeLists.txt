@@ -24,6 +24,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/gtest/googletest-src
         ${CMAKE_SOURCE_DIR}/gtest/googletest-build
         EXCLUDE_FROM_ALL)
 
+# Add googletest include directories
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
 # The gtest/gtest_main targets carry header search path
 # dependencies automatically when using CMake 2.8.11 or
 # later. Otherwise we have to add them here ourselves.
@@ -50,3 +53,4 @@ link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 add_subdirectory(src)
 add_executable(VDSProject src/main.cpp)
 target_link_libraries(VDSProject Manager)
+target_link_libraries(VDSProject gtest gtest_main)
