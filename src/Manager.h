@@ -8,6 +8,9 @@
 #include "ManagerInterface.h"
 #include <unordered_map>
 #include <vector>
+#include <fstream>
+#include <iostream>
+#include <cstring>
 
 namespace ClassProject {
     typedef struct {
@@ -17,6 +20,22 @@ namespace ClassProject {
       BDD_ID low;
       BDD_ID topVar;
     } BDDNode;
+
+	struct Triplet {
+        BDD_ID f, g, h;
+        bool operator==(const Triplet &other) const {
+            return (f == other.f && g == other.g && h == other.h);
+        }
+	};
+    
+	struct HashTriplet {
+        std::size_t operator()(const Triplet &t) const {
+            std::size_t h1 = std::hash<BDD_ID>()(t.f);
+            std::size_t h2 = std::hash<BDD_ID>()(t.g);
+            std::size_t h3 = std::hash<BDD_ID>()(t.h);
+            return h1 ^ (h2 << 1) ^ (h3 << 2);
+        }
+	};
 
     class Manager : public ManagerInterface {
     public:
