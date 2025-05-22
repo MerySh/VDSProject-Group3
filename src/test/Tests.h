@@ -29,51 +29,55 @@ namespace ClassProject {
     BDD_ID a_or_b_id = manager.or2(a_id, b_id);
     BDD_ID c_and_d_id = manager.and2(c_id, d_id);
     BDD_ID f_id = manager.and2(a_or_b_id, c_and_d_id);
+
+    // std::unique_ptr<ClassProject::Manager> manager = std::make_unique<ClassProject::Manager>(); // code from "ExtraTests.h"
 };
 
-TEST_F(ManagerTest, createVar) {
+TEST_F(ManagerTest, createVarTest) {
     EXPECT_EQ(manager.createVar("a"), a_id);
     EXPECT_EQ(manager.createVar("b"), b_id);
     EXPECT_EQ(manager.createVar("c"), c_id);
     EXPECT_EQ(manager.createVar("d"), d_id);
 }
 
-TEST_F(ManagerTest, True) {
+TEST_F(ManagerTest, TrueTest) {
     EXPECT_EQ(manager.True(), true_id);
 }
 
-TEST_F(ManagerTest, False) {
+TEST_F(ManagerTest, FalseTest) {
     EXPECT_EQ(manager.False(), false_id);
 }
 
-TEST_F(ManagerTest, isConstant) {
+TEST_F(ManagerTest, isConstantTest) {
     EXPECT_TRUE(manager.isConstant(true_id));
     EXPECT_TRUE(manager.isConstant(false_id));
     EXPECT_FALSE(manager.isConstant(a_id));
 }
 
-TEST_F(ManagerTest, isVariable) {  
+TEST_F(ManagerTest, isVariableTest) {  
     EXPECT_FALSE(manager.isVariable(true_id));
     EXPECT_FALSE(manager.isVariable(false_id));
     EXPECT_TRUE(manager.isVariable(a_id));
     EXPECT_FALSE(manager.isVariable(a_and_b_id));
 }
 
-TEST_F(ManagerTest, uniqueTableSize){
+TEST_F(ManagerTest, uniqueTableSizeTest){
     EXPECT_EQ(manager.uniqueTableSize(), 13);
 }
 
-TEST_F(ManagerTest, topVar) {
+TEST_F(ManagerTest, topVarTest) {
     EXPECT_EQ(manager.topVar(a_id), a_id);
     EXPECT_EQ(manager.topVar(b_id), b_id);
     EXPECT_EQ(manager.topVar(a_and_b_id), a_id);
 }
 
-TEST_F(ManagerTest, neg) { 
+TEST_F(ManagerTest, negTest) { 
     EXPECT_EQ(manager.neg(a_id), neg_a_id);
 }
 
-TEST_F(ManagerTest, ite) {
+TEST_F(ManagerTest, iteTest) {
+    EXPECT_EQ(manager.ite(a_id, true_id, false_id), a_id);
+
     BDD_ID ite_aORb = manager.ite(a_id, 1, b_id);
     EXPECT_EQ(ite_aORb, a_or_b_id);
     BDD_ID ite_bANDa = manager.ite(b_id, a_id, 0);
@@ -83,7 +87,7 @@ TEST_F(ManagerTest, ite) {
     EXPECT_EQ(manager.ite(b_id, a_id, true_id), manager.or2(a_and_b_id, manager.neg(b_id)));
 }
 
-TEST_F(ManagerTest, coFactorTrue) {
+TEST_F(ManagerTest, coFactorTrueTest) {
     EXPECT_EQ(manager.coFactorTrue(a_id, a_id), true_id);
     EXPECT_EQ(manager.coFactorTrue(a_id, true_id), a_id);
     EXPECT_EQ(manager.coFactorTrue(true_id, a_id), true_id);
@@ -96,7 +100,7 @@ TEST_F(ManagerTest, coFactorTrue) {
     EXPECT_EQ(manager.coFactorTrue(a_and_b_id, b_id), a_id);
 }
 
-TEST_F(ManagerTest, coFactorFalse) {
+TEST_F(ManagerTest, coFactorFalseTest) {
     EXPECT_EQ(manager.coFactorFalse(a_id, a_id), false_id);
     EXPECT_EQ(manager.coFactorFalse(a_id, false_id), a_id);
     EXPECT_EQ(manager.coFactorFalse(false_id, a_id), false_id);
@@ -108,7 +112,7 @@ TEST_F(ManagerTest, coFactorFalse) {
     EXPECT_EQ(manager.coFactorFalse(f_id, c_id), false_id);
 }
 
-TEST_F (ManagerTest, findNodes) {
+TEST_F (ManagerTest, findNodesTest) {
     std::set<BDD_ID> nodes_of_root, predefined_nodes_of_root;
     predefined_nodes_of_root = {0, 1, 5, 10, 11, 12};
     manager.findNodes(f_id, nodes_of_root);
@@ -124,7 +128,7 @@ TEST_F (ManagerTest, findNodes) {
     EXPECT_TRUE(a_and_b_nodes.find(true_id) != true_nodes.end());
 }
 
-TEST_F (ManagerTest, findVars) {
+TEST_F (ManagerTest, findVarsTest) {
 
     std::set<BDD_ID> vars_of_root, predefined_vars_of_root;
     predefined_vars_of_root = {2,3 , 4, 5};
@@ -140,12 +144,12 @@ TEST_F (ManagerTest, findVars) {
      EXPECT_TRUE(a_and_b_nodes.find(b_id) != a_and_b_nodes.end());
 }
 
-TEST_F (ManagerTest, visualizeBDD) {
+TEST_F (ManagerTest, visualizeBDDTest) {
     std::string filepath = "bdd.dot";
     manager.visualizeBDD(filepath, f_id);
 }
 
-TEST_F(ManagerTest, getTopVarName) {   
+TEST_F(ManagerTest, getTopVarNameTest) {   
     EXPECT_EQ(manager.getTopVarName(a_and_b_id), "a");
 }
 
