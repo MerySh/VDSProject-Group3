@@ -23,6 +23,9 @@ namespace ClassProject {
         newNode.topVar = static_cast<BDD_ID>(Manager::uniqueTableSize());
         BDD_uniqueTable.push_back(newNode);
 
+        Triplet key = {newNode.high, newNode.low, newNode.topVar};
+        optimizedTable[key] = newNode.id;
+
         return newNode.id;
     }
 
@@ -97,7 +100,6 @@ namespace ClassProject {
      * @param  e: Else-case BDD ID.
      * @return Existing or new BDD ID that represents the given expression.
      */
-    // F G H --- i t e 
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e)
     {
         // terminal case
@@ -116,29 +118,39 @@ namespace ClassProject {
         if (t == 1 && e == 0) {
             return i;
         }
-    
-        // computed table has entry for (f, g, h)
+
         Triplet tri{i,t,e};
+        auto checking = computedTable.find(tri);
+        if (checking != computedTable.end()){
+            return checking->second;
+        }
 
         BDD_ID x = Manager::False();
         if (!isConstant(i)) {
             x = topVar(i);
         }
-        if (!isConstant(t)){
+        if (!isConstant(t)) {
             x = std::min(topVar(t), x);
         }
-        if (!isConstant(e)){
+        if (!isConstant(e)) {
             x = std::min(topVar(e), x);
         }
 
         BDD_ID ct_f = Manager::coFactorTrue(i, x), ct_g = Manager::coFactorTrue(t, x), ct_h = Manager::coFactorTrue(e, x);
         BDD_ID T = ite(ct_f, ct_g, ct_h);
+        computedTable[{ct_f, ct_g, ct_h}] = T;
+
 
         BDD_ID cf_f = Manager::coFactorFalse(i, x), cf_g = Manager::coFactorFalse(t, x), cf_h = Manager::coFactorFalse(e, x);
         BDD_ID E = ite(cf_f, cf_g, cf_h);
 
         if (T == E) {
             return T;
+        }
+        Triplet key = {T,E,x};
+        auto it = optimizedTable.find(key);
+        if (it != optimizedTable.end()) {
+            return it->second;
         }
 
         BDDNode R;
@@ -148,6 +160,8 @@ namespace ClassProject {
         R.low = E;
         R.topVar = x;
         BDD_uniqueTable.emplace_back(R);
+        computedTable[tri] = R.id;
+        optimizedTable[key] = R.id;
 
         return R.id;
     }
@@ -390,7 +404,17 @@ namespace ClassProject {
         }
     }
 
-    // TODO 
+    /**
+     * Writes the Binary Decision Diagram (BDD) to a DOT file for visualization.
+     * - Each internal BDD node is represented by a circle with its top variable as a label.
+     * - Terminal nodes (0 and 1) are represented by boxes.
+     * - Edges to low (false) children are drawn as dotted lines.
+     * - Edges to high (true) children are drawn as solid lines.
+     *
+     * @param filepath The output path for the DOT file.
+     * @param root     The root BDD node ID to visualize.
+     * @return None.
+     */    
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root)
     {
         std::ofstream file(filepath);
