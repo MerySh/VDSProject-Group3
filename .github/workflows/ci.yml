@@ -1,0 +1,43 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [ "group3" ]
+  pull_request:
+    branches: [ "group3" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Clean Build Directory
+      run: rm -rf ${{github.workspace}}/build
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y libboost-all-dev
+
+    - name: Configure project with CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build project
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Run CTest
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: Run google Tests
+      run: |
+        if [ -f ${{github.workspace}}/build/src/test/VDSProject_test ]; then
+          chmod +x ${{github.workspace}}/build/src/test/VDSProject_test
+          ${{github.workspace}}/build/src/test/VDSProject_test
+        else
+          echo "Failed test!"
+          exit 1
