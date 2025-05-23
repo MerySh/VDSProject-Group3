@@ -157,3 +157,21 @@ TEST_F(ManagerTest, getTopVarNameTest) {
 }
 
 #endif
+
+/* for future reference, make sure to verify/check the test coverage (around 84%)
+ADD TESTS FOR:
+-nand
+-nor
+-xnor
+-cofactor
+
+Part 2:
+HASHING (we have already implemented it with the computed table)
+set of benchmarks, no other functionalities but make the code faster for runtime and small memory footprint
+
+disable the label building, since it impacts the benchmarks (we can use empty strings)
+
+change 0 and 1 with True and False, to make easier the functioning of the code
+
+modify the comments
+*/
