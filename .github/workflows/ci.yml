@@ -33,11 +33,3 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C ${{env.BUILD_TYPE}}
 
-    - name: Run google Tests
-      run: |
-        if [ -f ${{github.workspace}}/build/src/test/VDSProject_test ]; then
-          chmod +x ${{github.workspace}}/build/src/test/VDSProject_test
-          ${{github.workspace}}/build/src/test/VDSProject_test
-        else
-          echo "Failed test!"
-          exit 1
