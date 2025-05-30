@@ -103,11 +103,11 @@ namespace ClassProject {
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e)
     {
         // terminal case
-        if (i == 1) {
+        if (i == trueVar) {
             return t;
         }
         
-        if (i == 0) {
+        if (i == falseVar) {
             return e;
         }
     
@@ -115,7 +115,7 @@ namespace ClassProject {
             return t;
         }
     
-        if (t == 1 && e == 0) {
+        if (t == trueVar && e == falseVar) {
             return i;
         }
 
@@ -125,7 +125,7 @@ namespace ClassProject {
             return checking->second;
         }
 
-        BDD_ID x = Manager::False();
+        BDD_ID x = i;
         if (!isConstant(i)) {
             x = topVar(i);
         }
@@ -178,16 +178,12 @@ namespace ClassProject {
      */    
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x)
     {
-        // top variable of f comes after x in the variable order
         if (isConstant(f) || isConstant(x) || topVar(f) > x) {
-            // x does not appear in f
             return f;
         } else {
-            // x is the top variable of f
             if (topVar(f) == x) { 
                 return BDD_uniqueTable[f].high;
             }
-            // x appears below the top variable of f
             return ite(topVar(f), coFactorTrue(BDD_uniqueTable[f].high, x), coFactorTrue(BDD_uniqueTable[f].low, x));
         }
     }
@@ -206,14 +202,11 @@ namespace ClassProject {
     {
         // top variable of f comes after x in the variable order
         if (isConstant(f) || isConstant(x) || topVar(f) > x) {
-            // x does not appear in f
             return f; 
         } else {
-            // x is the top variable of f
             if (topVar(f) == x) { 
             return BDD_uniqueTable[f].low;
             }
-            // x appears below the top variable of f
             return ite(topVar(f), coFactorFalse(BDD_uniqueTable[f].high, x), coFactorFalse(BDD_uniqueTable[f].low, x));
         }
     }
@@ -292,8 +285,6 @@ namespace ClassProject {
         BDD_ID abOR = ite(a, Manager::True(), b);
         BDD_uniqueTable[abOR].label = "(" + BDD_uniqueTable[a].label + " + " + BDD_uniqueTable[b].label + ")";
 
-        //strncpy(BDD_uniqueTable[abOR].label, ("(" + std::string(BDD_uniqueTable[a].label) + " + " + std::string(BDD_uniqueTable[b].label) + ")").c_str(), sizeof(BDD_uniqueTable[abOR].label));
-        
         return abOR;
     }
 
@@ -398,7 +389,7 @@ namespace ClassProject {
         std::set<BDD_ID> nodes_of_root;
         findNodes(root, nodes_of_root);
         for (const auto &node : nodes_of_root) {
-            if (node != 0 && node != 1) {
+            if (node != falseVar && node != 1) {
                 vars_of_root.insert(topVar(node));
             }
         }
@@ -431,7 +422,7 @@ namespace ClassProject {
         findNodes(root, nodes);
 
         for (const auto &node : nodes) {
-            if (node != 0 && node != 1) {
+            if (node != falseVar && node != trueVar) {
                 file << "    " << node << " [label=\"" << BDD_uniqueTable[BDD_uniqueTable[node].topVar].label << "\"];" << std::endl;
                 file << "    " << node << " -> " << high << " [style=solid];" << std::endl;
                 file << "    " << node << " -> " << low << " [style=dotted];" << std::endl;
