@@ -54,3 +54,12 @@ add_subdirectory(src)
 add_executable(VDSProject src/main.cpp)
 target_link_libraries(VDSProject Manager)
 target_link_libraries(VDSProject gtest gtest_main)
+
+add_subdirectory(src/bench)
+add_executable(VDSProject_bench src/bench/main_bench.cpp)
+target_link_libraries(VDSProject_bench Manager)
+target_link_libraries(VDSProject_bench Benchmark)
+#target_link_libraries(VDSProject_bench ${Boost_LIBRARIES})
+
+add_subdirectory(src/verify)
+add_executable(VDSProject_verify src/verify/main_verify.cpp)
