@@ -9,15 +9,19 @@ namespace ClassProject {
      */    
     BDD_ID Manager::createVar(const std::string &label)
     {
+#ifdef INCLUDE_LABELS
         for (const auto &node : BDD_uniqueTable) {
             if (node.label == label) {
                 return node.id;
             }
         }
+#endif
 
         BDDNode newNode;
         newNode.id = static_cast<BDD_ID>(Manager::uniqueTableSize());
+#ifdef INCLUDE_LABELS
         newNode.label = label;
+#endif
         newNode.high = this->True();
         newNode.low = this->False();
         newNode.topVar = static_cast<BDD_ID>(Manager::uniqueTableSize());
@@ -155,7 +159,9 @@ namespace ClassProject {
 
         BDDNode R;
         R.id = static_cast<BDD_ID>(Manager::uniqueTableSize());
+#ifdef INCLUDE_LABELS
         R.label = "id" + std::to_string(R.id);
+#endif
         R.high = T;
         R.low = E;
         R.topVar = x;
@@ -253,8 +259,9 @@ namespace ClassProject {
     BDD_ID Manager::neg(BDD_ID a)
     {
         BDD_ID aNot = ite(a, Manager::False(), Manager::True());
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[aNot].label = "~" + BDD_uniqueTable[a].label;
-
+#endif
         return aNot;
     }
 
@@ -268,8 +275,9 @@ namespace ClassProject {
     BDD_ID Manager::and2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abAND = ite(a, b, Manager::False());
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abAND].label = "(" + BDD_uniqueTable[a].label + " * " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abAND;
     }
 
@@ -283,8 +291,9 @@ namespace ClassProject {
     BDD_ID Manager::or2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abOR = ite(a, Manager::True(), b);
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abOR].label = "(" + BDD_uniqueTable[a].label + " + " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abOR;
     }
 
@@ -298,8 +307,9 @@ namespace ClassProject {
     BDD_ID Manager::xor2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abXOR = ite(a, Manager::neg(b), b);
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abXOR].label = "(" + BDD_uniqueTable[a].label + " ^ " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abXOR;
     }
 
@@ -313,8 +323,9 @@ namespace ClassProject {
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abNAND = Manager::neg(and2(a, b));
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abNAND].label = "(" + BDD_uniqueTable[a].label + " * " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abNAND;
     }
 
@@ -328,8 +339,9 @@ namespace ClassProject {
     BDD_ID Manager::nor2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abNOR = Manager::neg(or2(a, b));
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abNOR].label = "(" + BDD_uniqueTable[a].label + " + " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abNOR;
     }
 
@@ -343,8 +355,9 @@ namespace ClassProject {
     BDD_ID Manager::xnor2(BDD_ID a, BDD_ID b)
     {
         BDD_ID abXNOR = Manager::neg(xor2(a, b));
+#ifdef INCLUDE_LABELS
         BDD_uniqueTable[abXNOR].label = "(" + BDD_uniqueTable[a].label + " ^ " + BDD_uniqueTable[b].label + ")";
-
+#endif
         return abXNOR;
     }
 
@@ -356,7 +369,9 @@ namespace ClassProject {
      */    
     std::string Manager::getTopVarName(const BDD_ID &root)
     {
+#ifdef INCLUDE_LABELS
         return BDD_uniqueTable[topVar(root)].label;
+#endif
     }
 
     /**
@@ -423,15 +438,18 @@ namespace ClassProject {
 
         for (const auto &node : nodes) {
             if (node != falseVar && node != trueVar) {
+#ifdef INCLUDE_LABELS
                 file << "    " << node << " [label=\"" << BDD_uniqueTable[BDD_uniqueTable[node].topVar].label << "\"];" << std::endl;
+#endif
                 file << "    " << node << " -> " << high << " [style=solid];" << std::endl;
                 file << "    " << node << " -> " << low << " [style=dotted];" << std::endl;
             }
         }
 
+#ifdef INCLUDE_LABELS
         file << "    0 [shape=box, label=\"0\"];" << std::endl;
         file << "    1 [shape=box, label=\"1\"];" << std::endl;
-
+#endif
         file << "}" << std::endl;
         file.close();
     }

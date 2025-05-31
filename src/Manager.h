@@ -12,10 +12,14 @@
 #include <iostream>
 #include <cstring>
 
+#define INCLUDE_LABELS
+
 namespace ClassProject {
     typedef struct {
       BDD_ID id;
+#ifdef INCLUDE_LABELS
       std::string label;
+#endif
       BDD_ID high;
       BDD_ID low;
       BDD_ID topVar;
@@ -41,8 +45,13 @@ namespace ClassProject {
     public:
         Manager()
         {
+#ifdef INCLUDE_LABELS
             BDD_uniqueTable.push_back({0, "False", 0, 0, 0});
             BDD_uniqueTable.push_back({1, "True", 1, 1, 1});
+#else
+            BDD_uniqueTable.push_back({0, 0, 0, 0});
+            BDD_uniqueTable.push_back({1, 1, 1, 1});
+#endif
         }
         ~Manager() {}
 
