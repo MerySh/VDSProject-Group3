@@ -2,6 +2,24 @@
 
 namespace ClassProject {
     /**
+     * Sets the label for a BDD node based on the label type defined by macros.
+     *
+     * @param id: The BDD node ID whose label should be set.
+     * @param label: The label string to assign to the node.
+     *
+     * @return None.
+     */
+    void Manager::setLabel(BDD_ID id, const std::string& label)
+    {
+#ifdef USE_STRING_LABEL
+        BDD_uniqueTable[id].label = label;
+#elif defined(USE_CHAR_LABEL)
+        strncpy(BDD_uniqueTable[id].label, label.c_str(), sizeof(BDD_uniqueTable[id].label));
+        BDD_uniqueTable[id].label[sizeof(BDD_uniqueTable[id].label) - 1] = '\0';
+#endif
+    }
+
+    /**
      * Creates a new variable with the given label and returns its ID.
      *
      * @param  label: The name of the variable.
@@ -20,7 +38,11 @@ namespace ClassProject {
         BDDNode newNode;
         newNode.id = static_cast<BDD_ID>(Manager::uniqueTableSize());
 #ifdef INCLUDE_LABELS
+    #ifdef USE_STRING_LABEL
         newNode.label = label;
+    #elif defined(USE_CHAR_LABEL)
+        strncpy(newNode.label, label.c_str(), sizeof(newNode.label) - 1);
+    #endif
 #endif
         newNode.high = this->True();
         newNode.low = this->False();
@@ -160,7 +182,11 @@ namespace ClassProject {
         BDDNode R;
         R.id = static_cast<BDD_ID>(Manager::uniqueTableSize());
 #ifdef INCLUDE_LABELS
+    #ifdef USE_STRING_LABEL
         R.label = "id" + std::to_string(R.id);
+    #elif defined(USE_CHAR_LABEL)
+        strncpy(R.label, ("id" + std::to_string(R.id)).c_str(), sizeof(R.label) - 1);
+    #endif
 #endif
         R.high = T;
         R.low = E;
@@ -260,7 +286,7 @@ namespace ClassProject {
     {
         BDD_ID aNot = ite(a, Manager::False(), Manager::True());
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[aNot].label = "~" + BDD_uniqueTable[a].label;
+        setLabel(aNot, "~" + std::string(BDD_uniqueTable[a].label));
 #endif
         return aNot;
     }
@@ -276,7 +302,7 @@ namespace ClassProject {
     {
         BDD_ID abAND = ite(a, b, Manager::False());
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abAND].label = "(" + BDD_uniqueTable[a].label + " * " + BDD_uniqueTable[b].label + ")";
+        setLabel(abAND, "(" + std::string(BDD_uniqueTable[a].label) + " * " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abAND;
     }
@@ -292,7 +318,7 @@ namespace ClassProject {
     {
         BDD_ID abOR = ite(a, Manager::True(), b);
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abOR].label = "(" + BDD_uniqueTable[a].label + " + " + BDD_uniqueTable[b].label + ")";
+        setLabel(abOR, "(" + std::string(BDD_uniqueTable[a].label) + " + " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abOR;
     }
@@ -308,7 +334,7 @@ namespace ClassProject {
     {
         BDD_ID abXOR = ite(a, Manager::neg(b), b);
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abXOR].label = "(" + BDD_uniqueTable[a].label + " ^ " + BDD_uniqueTable[b].label + ")";
+        setLabel(abXOR, "(" + std::string(BDD_uniqueTable[a].label) + " ^ " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abXOR;
     }
@@ -324,7 +350,7 @@ namespace ClassProject {
     {
         BDD_ID abNAND = Manager::neg(and2(a, b));
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abNAND].label = "(" + BDD_uniqueTable[a].label + " * " + BDD_uniqueTable[b].label + ")";
+        setLabel(abNAND, "~(" + std::string(BDD_uniqueTable[a].label) + " * " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abNAND;
     }
@@ -340,7 +366,7 @@ namespace ClassProject {
     {
         BDD_ID abNOR = Manager::neg(or2(a, b));
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abNOR].label = "(" + BDD_uniqueTable[a].label + " + " + BDD_uniqueTable[b].label + ")";
+        setLabel(abNOR, "~(" + std::string(BDD_uniqueTable[a].label) + " + " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abNOR;
     }
@@ -356,7 +382,7 @@ namespace ClassProject {
     {
         BDD_ID abXNOR = Manager::neg(xor2(a, b));
 #ifdef INCLUDE_LABELS
-        BDD_uniqueTable[abXNOR].label = "(" + BDD_uniqueTable[a].label + " ^ " + BDD_uniqueTable[b].label + ")";
+        setLabel(abXNOR, "~(" + std::string(BDD_uniqueTable[a].label) + " ^ " + std::string(BDD_uniqueTable[b].label) + ")");
 #endif
         return abXNOR;
     }
@@ -371,6 +397,8 @@ namespace ClassProject {
     {
 #ifdef INCLUDE_LABELS
         return BDD_uniqueTable[topVar(root)].label;
+#else
+        return "";
 #endif
     }
 
@@ -446,10 +474,9 @@ namespace ClassProject {
             }
         }
 
-#ifdef INCLUDE_LABELS
         file << "    0 [shape=box, label=\"0\"];" << std::endl;
         file << "    1 [shape=box, label=\"1\"];" << std::endl;
-#endif
+
         file << "}" << std::endl;
         file.close();
     }

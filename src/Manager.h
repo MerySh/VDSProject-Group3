@@ -12,13 +12,22 @@
 #include <iostream>
 #include <cstring>
 
+// Toggle to include label support
 #define INCLUDE_LABELS
+
+// Choose one label type
+//#define USE_STRING_LABEL
+#define USE_CHAR_LABEL
 
 namespace ClassProject {
     typedef struct {
       BDD_ID id;
 #ifdef INCLUDE_LABELS
-      std::string label;
+    #ifdef USE_STRING_LABEL
+        std::string label;
+    #elif defined(USE_CHAR_LABEL)
+        char label[20];
+    #endif
 #endif
       BDD_ID high;
       BDD_ID low;
@@ -81,6 +90,7 @@ namespace ClassProject {
         void findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) override;
         size_t uniqueTableSize() override;
         void visualizeBDD(std::string filepath, BDD_ID &root) override;
+        void setLabel(BDD_ID id, const std::string& label);
 
     private:
       std::vector<BDDNode> BDD_uniqueTable;
