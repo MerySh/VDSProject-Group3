@@ -50,7 +50,7 @@ namespace ClassProject {
         BDD_uniqueTable.push_back(newNode);
 
         Triplet key = {newNode.high, newNode.low, newNode.topVar};
-        optimizedTable[key] = newNode.id;
+        BDD_optimizedTable[key] = newNode.id;
 
         return newNode.id;
     }
@@ -128,7 +128,7 @@ namespace ClassProject {
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e)
     {
-        // terminal case
+        // terminal cases
         if (i == trueVar) {
             return t;
         }
@@ -146,8 +146,8 @@ namespace ClassProject {
         }
 
         Triplet tri{i,t,e};
-        auto checking = computedTable.find(tri);
-        if (checking != computedTable.end()){
+        auto checking = BDD_computedTable.find(tri);
+        if (checking != BDD_computedTable.end()){
             return checking->second;
         }
 
@@ -166,7 +166,7 @@ namespace ClassProject {
         BDD_ID ct_h = Manager::coFactorTrue(e, x);
         BDD_ID ct_f = Manager::coFactorTrue(i, x);
         BDD_ID T = ite(ct_f, ct_g, ct_h);
-        computedTable[{ct_f, ct_g, ct_h}] = T;
+        BDD_computedTable[{ct_f, ct_g, ct_h}] = T;
 
         BDD_ID cf_f = Manager::coFactorFalse(i, x);
         BDD_ID cf_g = Manager::coFactorFalse(t, x);
@@ -176,9 +176,10 @@ namespace ClassProject {
         if (T == E) {
             return T;
         }
+
         Triplet key = {T,E,x};
-        auto it = optimizedTable.find(key);
-        if (it != optimizedTable.end()) {
+        auto it = BDD_optimizedTable.find(key);
+        if (it != BDD_optimizedTable.end()) {
             return it->second;
         }
 
@@ -195,8 +196,8 @@ namespace ClassProject {
         R.low = E;
         R.topVar = x;
         BDD_uniqueTable.emplace_back(R);
-        computedTable[tri] = R.id;
-        optimizedTable[key] = R.id;
+        BDD_computedTable[tri] = R.id;
+        BDD_optimizedTable[key] = R.id;
 
         return R.id;
     }
@@ -276,7 +277,7 @@ namespace ClassProject {
      */    
     size_t Manager::uniqueTableSize()
     {
-      return Manager::BDD_uniqueTable.size();
+        return Manager::BDD_uniqueTable.size();
     }
 
     /**
@@ -435,7 +436,7 @@ namespace ClassProject {
         std::set<BDD_ID> nodes_of_root;
         findNodes(root, nodes_of_root);
         for (const auto &node : nodes_of_root) {
-            if (node != falseVar && node != 1) {
+            if (node != falseVar && node != trueVar) {
                 vars_of_root.insert(topVar(node));
             }
         }

@@ -95,8 +95,8 @@ namespace ClassProject {
 
     private:
       std::vector<BDDNode> BDD_uniqueTable;
-      std::unordered_map<Triplet, BDD_ID, HashTriplet> computedTable;
-      std::unordered_map<Triplet, BDD_ID, HashTriplet> optimizedTable;
+      std::unordered_map<Triplet, BDD_ID, HashTriplet> BDD_computedTable;
+      std::unordered_map<Triplet, BDD_ID, HashTriplet> BDD_optimizedTable;
     };
 }
 
