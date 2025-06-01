@@ -11,6 +11,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <limits>
 
 // Toggle to include label support
 #define INCLUDE_LABELS

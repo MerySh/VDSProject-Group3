@@ -151,7 +151,7 @@ namespace ClassProject {
             return checking->second;
         }
 
-        BDD_ID x = i;
+        BDD_ID x = std::numeric_limits<BDD_ID>::max();
         if (!isConstant(i)) {
             x = topVar(i);
         }
@@ -162,12 +162,15 @@ namespace ClassProject {
             x = std::min(topVar(e), x);
         }
 
-        BDD_ID ct_f = Manager::coFactorTrue(i, x), ct_g = Manager::coFactorTrue(t, x), ct_h = Manager::coFactorTrue(e, x);
+        BDD_ID ct_g = Manager::coFactorTrue(t, x);
+        BDD_ID ct_h = Manager::coFactorTrue(e, x);
+        BDD_ID ct_f = Manager::coFactorTrue(i, x);
         BDD_ID T = ite(ct_f, ct_g, ct_h);
         computedTable[{ct_f, ct_g, ct_h}] = T;
 
-
-        BDD_ID cf_f = Manager::coFactorFalse(i, x), cf_g = Manager::coFactorFalse(t, x), cf_h = Manager::coFactorFalse(e, x);
+        BDD_ID cf_f = Manager::coFactorFalse(i, x);
+        BDD_ID cf_g = Manager::coFactorFalse(t, x);
+        BDD_ID cf_h = Manager::coFactorFalse(e, x);
         BDD_ID E = ite(cf_f, cf_g, cf_h);
 
         if (T == E) {
