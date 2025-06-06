@@ -151,10 +151,7 @@ namespace ClassProject {
             return checking->second;
         }
 
-        BDD_ID x = std::numeric_limits<BDD_ID>::max();
-        if (!isConstant(i)) {
-            x = topVar(i);
-        }
+        BDD_ID x = topVar(i);
         if (!isConstant(t)) {
             x = std::min(topVar(t), x);
         }
@@ -415,13 +412,10 @@ namespace ClassProject {
      */    
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root)
     {
-        if (nodes_of_root.find(root) != nodes_of_root.end()) {
-            return;
+        if (nodes_of_root.insert(BDD_uniqueTable[root].id).second) {
+            findNodes(BDD_uniqueTable[root].high, nodes_of_root);
+            findNodes(BDD_uniqueTable[root].low, nodes_of_root);
         }
-
-        nodes_of_root.insert(BDD_uniqueTable[root].id);
-        findNodes(BDD_uniqueTable[root].high, nodes_of_root);
-        findNodes(BDD_uniqueTable[root].low, nodes_of_root);
     }
 
     /**
