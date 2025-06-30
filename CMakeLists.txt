@@ -24,6 +24,9 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/gtest/googletest-src
         ${CMAKE_SOURCE_DIR}/gtest/googletest-build
         EXCLUDE_FROM_ALL)
 
+# Add googletest include directories
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
 # The gtest/gtest_main targets carry header search path
 # dependencies automatically when using CMake 2.8.11 or
 # later. Otherwise we have to add them here ourselves.
@@ -50,3 +53,18 @@ link_directories(${CMAKE_SOURCE_DIR}/src/verify/)
 add_subdirectory(src)
 add_executable(VDSProject src/main.cpp)
 target_link_libraries(VDSProject Manager)
+target_link_libraries(VDSProject gtest gtest_main)
+
+add_subdirectory(src/bench)
+add_executable(VDSProject_bench src/bench/main_bench.cpp)
+target_link_libraries(VDSProject_bench Manager)
+target_link_libraries(VDSProject_bench Benchmark)
+#target_link_libraries(VDSProject_bench ${Boost_LIBRARIES})
+
+add_subdirectory(src/verify)
+add_executable(VDSProject_verify src/verify/main_verify.cpp)
+
+add_subdirectory(src/reachability)
+add_executable(VDSProject_reachability src/reachability/main_test.cpp src/reachability/Reachability.cpp src/reachability/Reachability.h src/reachability/ReachabilityInterface.h src/reachability/Tests.h)
+target_link_libraries(VDSProject_reachability Manager)
+target_link_libraries(VDSProject_reachability gtest gtest_main pthread)

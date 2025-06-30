@@ -35,9 +35,9 @@
   <h3 align="center">
   VDS Class Project
   <br />
-  Group #X
+  Group 3
   <br />
-  Winter Semester 2022/2023
+  Summer Semester 2025
   </h3>
 
   <p align="center">
@@ -156,7 +156,7 @@ This is an example of how to list things you need to use the software and how to
 ### Installation
 1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/VDSProject
+   git clone https://github.com/MerySh/VDSProject
    ```
 **Installation with CLion**
 
@@ -214,8 +214,8 @@ _Below is an example of how you can instruct your audience on installing and set
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 #### Part-3
-- [ ] TODO
-- [X] DONE
+- [X] TODO
+- [ ] DONE
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
@@ -223,6 +223,9 @@ _Below is an example of how you can instruct your audience on installing and set
 
 <!-- Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com -->
 Lucas Deutschmann & Philipp Schmitz - eit-vds-cp@rptu.de
+Meri Shakaryan - meri.shakaryan@edu.rptu.de
+Lorenzo Campana - lorenzo.campana@edu.rptu.de
+Mateo Rodriguez - baq66zer@rptu.de
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
